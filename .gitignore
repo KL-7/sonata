@@ -6,3 +6,6 @@ mo/
 tags
 TAGS
 cscope*
+.project
+.pydevproject
+.settings/
