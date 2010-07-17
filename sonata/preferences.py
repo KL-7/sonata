@@ -368,7 +368,7 @@ class Preferences():
 
         art_paths = ["~/.covers/"]
         art_paths += ("%s/%s" % (_("SONG_DIR"), item)
-            for item in ("cover.jpg", "album.jpg", "folder.jpg",
+            for item in ("artwork.jpg", "cover.jpg", "album.jpg", "folder.jpg",
                 self.config.art_location_custom_filename or _("custom")))
         art_location = ui.combo(items=art_paths,
             active=self.config.art_location,

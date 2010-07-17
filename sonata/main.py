@@ -2130,6 +2130,8 @@ class Base(object):
                 art_loc = self.config.art_location
             if art_loc == consts.ART_LOCATION_HOMECOVERS:
                 targetfile = os.path.join(os.path.expanduser("~/.covers"), "%s-%s.jpg" % (artist, album))
+            elif art_loc == consts.ART_LOCATION_ARTWORK:
+                targetfile = os.path.join(self.config.musicdir[self.config.profile_num], songpath, "artwork.jpg")
             elif art_loc == consts.ART_LOCATION_COVER:
                 targetfile = os.path.join(self.config.musicdir[self.config.profile_num], songpath, "cover.jpg")
             elif art_loc == consts.ART_LOCATION_FOLDER:

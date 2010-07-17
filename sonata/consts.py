@@ -29,10 +29,11 @@ class Constants:
         self.NOTIFICATION_WIDTH_MIN = 350
         self.FULLSCREEN_COVER_SIZE = 500
         self.ART_LOCATION_HOMECOVERS = 0      # ~/.covers/[artist]-[album].jpg
-        self.ART_LOCATION_COVER = 1           # file_dir/cover.jpg
-        self.ART_LOCATION_ALBUM = 2           # file_dir/album.jpg
-        self.ART_LOCATION_FOLDER = 3          # file_dir/folder.jpg
-        self.ART_LOCATION_CUSTOM = 4          # file_dir/[custom]
+        self.ART_LOCATION_ARTWORK = 1         # file_dir/artwork.jpg
+        self.ART_LOCATION_COVER = 2           # file_dir/cover.jpg
+        self.ART_LOCATION_ALBUM = 3           # file_dir/album.jpg
+        self.ART_LOCATION_FOLDER = 4          # file_dir/folder.jpg
+        self.ART_LOCATION_CUSTOM = 5          # file_dir/[custom]
         self.ART_LOCATION_SINGLE = 6
         self.ART_LOCATION_MISC = 7
         self.ART_LOCATIONS_MISC = ['front.jpg', '.folder.jpg', '.folder.png', 'AlbumArt.jpg', 'AlbumArtSmall.jpg']

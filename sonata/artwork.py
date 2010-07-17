@@ -390,6 +390,7 @@ class Artwork(object):
 
         # Now try all local possibilities...
         simplelocations = [consts.ART_LOCATION_HOMECOVERS,
+                   consts.ART_LOCATION_ARTWORK,
                    consts.ART_LOCATION_COVER,
                    consts.ART_LOCATION_ALBUM,
                    consts.ART_LOCATION_FOLDER]
@@ -530,6 +531,7 @@ class Artwork(object):
             else:
                 # Normal song:
                 if (filename in [self.target_image_filename(consts.ART_LOCATION_HOMECOVERS),
+                         self.target_image_filename(consts.ART_LOCATION_ARTWORK),
                          self.target_image_filename(consts.ART_LOCATION_COVER),
                          self.target_image_filename(consts.ART_LOCATION_ALBUM),
                          self.target_image_filename(consts.ART_LOCATION_FOLDER),
