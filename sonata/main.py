@@ -2893,9 +2893,9 @@ class Base(object):
     def on_link_click(self, linktype):
         browser_not_loaded = False
         if linktype == 'artist':
-            browser_not_loaded = not misc.browser_load("http://www.wikipedia.org/wiki/Special:Search/" + urllib.quote(mpdh.get(self.songinfo, 'artist')), self.config.url_browser, self.window)
+            browser_not_loaded = not misc.browser_load("http://www.last.fm/music/%s" % urllib.quote(mpdh.get(self.songinfo, 'artist')), self.config.url_browser, self.window)
         elif linktype == 'album':
-            browser_not_loaded = not misc.browser_load("http://www.wikipedia.org/wiki/Special:Search/" + urllib.quote(mpdh.get(self.songinfo, 'album')), self.config.url_browser, self.window)
+            browser_not_loaded = not misc.browser_load("http://www.last.fm/music/%s/%s" % (mpdh.get(self.songinfo, 'artist'), urllib.quote(mpdh.get(self.songinfo, 'album'))), self.config.url_browser, self.window)
         elif linktype == 'edit':
             if self.songinfo:
                 self.on_tags_edit(None)

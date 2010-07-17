@@ -78,9 +78,9 @@ class Info(object):
         self.info_boxes_in_more = []
         labels = [(_("Title"), 'title', False, "", False),
             (_("Artist"), 'artist', True,
-                _("Launch artist in Wikipedia"), False),
+                _("Launch artist in Last.fm"), False),
             (_("Album"), 'album', True,
-                 _("Launch album in Wikipedia"), False),
+                 _("Launch album in Last.fm"), False),
             (_("Date"), 'date', False, "", False),
             (_("Track"), 'track', False, "", False),
             (_("Genre"), 'genre', False, "", False),
