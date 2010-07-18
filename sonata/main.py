@@ -436,7 +436,7 @@ class Base(object):
             ]
 
         # Library tab
-        self.library = library.Library(self.config, self.client, self.artwork, self.TAB_LIBRARY, self.find_path('sonata-album.png'), self.settings_save, self.current.filtering_entry_make_red, self.current.filtering_entry_revert_color, self.current.filter_key_pressed, self.on_add_item, self.connected, self.on_library_button_press, self.new_tab)
+        self.library = library.Library(self.config, self.client, self.artwork, self.TAB_LIBRARY, self.find_path('sonata-album.png'), self.settings_save, self.current.filtering_entry_make_red, self.current.filtering_entry_revert_color, self.current.filter_key_pressed, self.on_add_item, self.connected, self.on_library_button_press, self.new_tab, self.get_multicd_album_root_dir)
 
         self.library_treeview = self.library.get_treeview()
         self.library_selection = self.library.get_selection()
@@ -2121,6 +2121,7 @@ class Base(object):
             artist = artist.replace("/", "")
             if songpath is None:
                 songpath = os.path.dirname(mpdh.get(self.songinfo, 'file'))
+            songpath = self.get_multicd_album_root_dir(songpath)
             # Return target filename:
             if force_location is not None:
                 art_loc = force_location
@@ -2140,6 +2141,17 @@ class Base(object):
                 targetfile = os.path.join(self.config.musicdir[self.config.profile_num], songpath, self.config.art_location_custom_filename)
             targetfile = misc.file_exists_insensitive(targetfile)
             return misc.file_from_utf8(targetfile)
+
+    def get_multicd_album_root_dir(self, albumpath):
+        """Go one dir upper for multicd albums
+        Examples:
+            get_multicd_album_root_dir('Moonspell/1995 - Wolfheart/cd 2') -> 'Moonspell/1995 - Wolfheart'
+            get_multicd_album_root_dir('Nightwish/2007 - Dark Passion Play/CD3') -> 'Nightwish/2007 - Dark Passion Play'
+        """
+
+        if re.compile(r'(?i)cd\s*\d+').match(os.path.split(albumpath)[1]):
+            albumpath = os.path.split(albumpath)[0]
+        return albumpath
 
     def album_return_artist_and_tracks(self):
         # Includes logic for Various Artists albums to determine
