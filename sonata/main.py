@@ -31,8 +31,12 @@ import gobject, gtk, pango
 warnings.simplefilter('ignore', DeprecationWarning)
 try:
     import egg.trayicon
-    HAVE_EGG = True
-    HAVE_STATUS_ICON = False
+    # Never use egg.trayicon
+    HAVE_EGG = False
+    HAVE_STATUS_ICON = True
+    # Uncomment to use egg.trayicon if possible
+    # HAVE_EGG = True
+    # HAVE_STATUS_ICON = False
 except ImportError:
     HAVE_EGG = False
     HAVE_STATUS_ICON = True
