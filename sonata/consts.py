@@ -37,10 +37,10 @@ class Constants:
         self.ART_LOCATION_SINGLE = 6
         self.ART_LOCATION_MISC = 7
         self.ART_LOCATIONS_MISC = ['front.jpg', '.folder.jpg', '.folder.png', 'AlbumArt.jpg', 'AlbumArtSmall.jpg']
-        self.LYRICS_LOCATION_HOME = 0         # ~/.lyrics/[artist]-[song].txt
-        self.LYRICS_LOCATION_PATH = 1         # file_dir/[artist]-[song].txt
-        self.LYRICS_LOCATION_HOME_ALT = 2     # ~/.lyrics/[artist] - [song].txt
-        self.LYRICS_LOCATION_PATH_ALT = 3     # file_dir/[artist] - [song].txt
+        self.LYRICS_LOCATION_HOME = 0         # ~/.lyrics/[artist] - [song].txt
+        self.LYRICS_LOCATION_PATH = 1         # file_dir/[artist] - [song].txt
+        self.LYRICS_LOCATION_HOME_ALT = 2     # ~/.lyrics/[artist]-[song].txt
+        self.LYRICS_LOCATION_PATH_ALT = 3     # file_dir/[artist]-[song].txt
         self.LIB_COVER_SIZE = 32
         self.COVERS_TYPE_STANDARD = 0
         self.COVERS_TYPE_STYLIZED = 1
