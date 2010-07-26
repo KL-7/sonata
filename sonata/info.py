@@ -3,11 +3,20 @@ from __future__ import with_statement
 import sys, os, locale
 
 import gtk
+import pango
+import gobject
 
 import ui, misc
 import mpdhelper as mpdh
 from consts import consts
 from pluginsystem import pluginsystem
+
+HAVE_EYED3 = False
+try:
+    import eyeD3
+    HAVE_EYED3 = True
+except ImportError:
+    print "Failed to load eyeD3 (from python-eyed3 package); saving lyrics to id3tags will be disabled."
 
 class Info(object):
     def __init__(self, config, info_image, linkcolor, on_link_click_cb, get_playing_song, TAB_INFO, on_image_activate, on_image_motion_cb, on_image_drop_cb, album_return_artist_and_tracks, new_tab):
@@ -140,12 +149,16 @@ class Info(object):
         lyricsbox_bottom = gtk.HBox()
         self._searchlabel = ui.label(y=0)
         self._editlyricslabel = ui.label(y=0)
+        self._savelyricslabel = ui.label(y=0)
         searchevbox = ui.eventbox(add=self._searchlabel)
         editlyricsevbox = ui.eventbox(add=self._editlyricslabel)
+        savelyricsevbox = ui.eventbox(add=self._savelyricslabel)
         self._apply_link_signals(searchevbox, 'search', _("Search Lyricwiki.org for lyrics"))
         self._apply_link_signals(editlyricsevbox, 'editlyrics', _("Edit lyrics at Lyricwiki.org"))
+        self._apply_link_signals(savelyricsevbox, 'savelyrics', _("Save lyrics to file tags"))
         lyricsbox_bottom.pack_start(searchevbox, False, False, horiz_spacing)
         lyricsbox_bottom.pack_start(editlyricsevbox, False, False, horiz_spacing)
+        lyricsbox_bottom.pack_start(savelyricsevbox, False, False, horiz_spacing)
         lyricsbox.pack_start(lyricsbox_bottom, False, False, vert_spacing)
         self.info_lyrics.add(lyricsbox)
         return self.info_lyrics
@@ -291,7 +304,7 @@ class Info(object):
     def _update_lyrics(self, songinfo):
         if self.config.show_lyrics:
             if 'artist' in songinfo and 'title' in songinfo:
-                self.get_lyrics_start(mpdh.get(songinfo, 'artist'), mpdh.get(songinfo, 'title'), mpdh.get(songinfo, 'artist'), mpdh.get(songinfo, 'title'), os.path.dirname(mpdh.get(songinfo, 'file')))
+                self.get_lyrics_start(mpdh.get(songinfo, 'artist'), mpdh.get(songinfo, 'title'), mpdh.get(songinfo, 'artist'), mpdh.get(songinfo, 'title'), mpdh.get(songinfo, 'file'))
             else:
                 self._show_lyrics(None, None, error=_("Artist or song title not set."))
 
@@ -306,7 +319,8 @@ class Info(object):
             if os.path.exists(filename):
                 return filename
 
-    def get_lyrics_start(self, search_artist, search_title, filename_artist, filename_title, song_dir):
+    def get_lyrics_start(self, search_artist, search_title, filename_artist, filename_title, song_file):
+        song_dir = os.path.dirname(song_file)
         filename_artist = misc.strip_all_slashes(filename_artist)
         filename_title = misc.strip_all_slashes(filename_title)
         filename = self._check_for_local_lyrics(filename_artist, filename_title, song_dir)
@@ -341,7 +355,7 @@ class Info(object):
             # Fetch lyrics from lyricwiki.org etc.
             lyrics_fetchers = pluginsystem.get('lyrics_fetching')
             callback = lambda *args: self.get_lyrics_response(
-                filename_artist, filename_title, song_dir, *args)
+                filename_artist, filename_title, song_file, *args)
             if lyrics_fetchers:
                 msg = _("Fetching lyrics...")
                 for _plugin, cb in lyrics_fetchers:
@@ -351,10 +365,10 @@ class Info(object):
             self._show_lyrics(filename_artist, filename_title,
                           lyrics=msg)
 
-    def get_lyrics_response(self, artist_then, title_then, song_dir,
+    def get_lyrics_response(self, artist_then, title_then, song_file,
                 lyrics=None, error=None):
         if lyrics and not error:
-            filename = self.target_lyrics_filename(artist_then, title_then, song_dir)
+            filename = self.target_lyrics_filename(artist_then, title_then, os.path.dirname(song_file))
             # Save lyrics to file:
             misc.create_dir('~/.lyrics/')
             try:
@@ -367,13 +381,62 @@ class Info(object):
             except IOError:
                 pass
 
+            # save lyrics to mp3 file
+            if self.config.save_lyrics_to_id3tags and eyeD3.isMp3File(song_file):
+                self.save_lyrics_to_id3tags(song_file, lyrics)
+
         self._show_lyrics(artist_then, title_then, lyrics, error)
+
+    def save_lyrics_to_id3tags(self, filename, lyrics, override=False):
+        '''Save lyrics to id3tags of the file. Uses "sonata" as lyrics frame
+           description. Return True if succeed, False otherwise.
+
+                filename - mpd file path (relative to mpd music directory)
+                override - if set lyrics will be overridden
+        '''
+        if lyrics in (_("No lyrics plug-in enabled."), _("Fetching lyrics...")):
+            print '[lyrics2tags]: System message "%s" wasn\'t saved in id3tags.' % lyrics
+            return True
+
+        LYRICS_DESC = u'sonata'
+        filename = os.path.join(self.config.musicdir[self.config.profile_num], filename)
+        if not HAVE_EYED3:
+            print '[lyrics2tags]: Failed - eyeD3 is not installed.'
+            return False
+        if not eyeD3.isMp3File(filename):
+            print '[lyrics2tags]: Failed - "%s" is not MP3 file.' % filename
+            return False
+
+        try:
+            tag = eyeD3.Mp3AudioFile(filename).getTag()
+            if not override:
+                for l in tag.getLyrics():
+                    if l.description == LYRICS_DESC and l.lyrics:
+                        print '[lyrics2tags]: Lyrics with "%s" description already exists in "%s".' % (LYRICS_DESC, filename)
+                        return False
+
+            # parse lyrics to remove tags like <b> and <i>
+            lyrics = pango.parse_markup(lyrics.replace('&', '&amp;'))[1]
+            tag.frames.setLyricsFrame(lyrics.decode('utf-8'), LYRICS_DESC,
+                                      encoding=eyeD3.UTF_8_ENCODING)
+            tag.update()
+        except gobject.GError:
+            print '[lyrics2tags]: Failed to parse lyrics "%s...".' % lyrics.split('\n')[0]
+            return False
+        except Exception as e:
+            print '[lyrics2tags]: Failed to save lyrics to id3tags in "%s".' % filename
+            print '[lyrics2tags]: ', e
+            return False
+
+        print '[lyrics2tags]: Lyrics "%s..." successfully saved to id3tags in "%s"' % (lyrics.split('\n')[0], filename)
+        return True
 
     def _show_lyrics(self, artist_then, title_then, lyrics=None, error=None):
         # For error messages where there is no appropriate info:
         if not artist_then or not title_then:
             self._searchlabel.set_markup("")
             self._editlyricslabel.set_markup("")
+            self._savelyricslabel.set_markup("")
             if error:
                 self.lyricsText.set_markup(error)
             elif lyrics:
@@ -395,13 +458,20 @@ class Info(object):
                 _("edit"), True, True, self.linkcolor))
             if error:
                 self.lyricsText.set_markup(error)
+                self._savelyricslabel.set_markup("")
             elif lyrics:
                 try:
                     self.lyricsText.set_markup(lyrics.replace('&', '&amp;'))
                 except: ### XXX why would this happen?
                     self.lyricsText.set_text(lyrics)
+                if lyrics == _("No lyrics plug-in enabled.") or lyrics == _("Fetching lyrics..."):
+                    self._savelyricslabel.set_markup("")
+                else:
+                    self._savelyricslabel.set_markup(misc.link_markup(
+                        _("save"), True, True, self.linkcolor))
             else:
                 self.lyricsText.set_markup("")
+                self._savelyricslabel.set_markup("")
 
     def resize_elements(self, notebook_allocation):
         # Resize labels in info tab to prevent horiz scrollbar:

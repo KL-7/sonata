@@ -1977,7 +1977,35 @@ class Base(object):
             filename = self.info.target_lyrics_filename(artist, title, None, consts.LYRICS_LOCATION_HOME)
             misc.remove_file(filename)
             # Search for new lyrics:
-            self.info.get_lyrics_start(artist_entry.get_text(), title_entry.get_text(), artist, title, os.path.dirname(mpdh.get(self.songinfo, 'file')))
+            self.info.get_lyrics_start(artist_entry.get_text(), title_entry.get_text(), artist, title, mpdh.get(self.songinfo, 'file'))
+        dialog.destroy()
+
+    def on_lyrics_save_to_id3tags(self, _event):
+        lyrics = self.info.lyricsText.get_text()
+        song_file = mpdh.get(self.songinfo, 'file')
+        dialog = ui.dialog(title=_('Save Lyrics'), parent=self.window,
+                           flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                           buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT, gtk.STOCK_SAVE, gtk.RESPONSE_ACCEPT),
+                           role='saveLyrics', default=gtk.RESPONSE_ACCEPT, separator=False)
+
+        dialog.action_area.get_children()[0].set_label(_("_Save"))
+        dialog.action_area.get_children()[0].set_image(ui.image(stock=gtk.STOCK_SAVE))
+
+        text = '%s "%s"?' % (_("Save lyrics to"), song_file)
+        filelabel = ui.label(text=text, select=True, wrap=True)
+        hbox = gtk.HBox()
+        hbox.pack_start(filelabel, padding=5)
+        dialog.vbox.pack_start(hbox, padding=5)
+        ui.show(dialog.vbox)
+
+        response = dialog.run()
+        if response == gtk.RESPONSE_ACCEPT:
+            if not self.info.save_lyrics_to_id3tags(song_file, lyrics, True):
+                err_message = '%s "%s"' % (_("Failed to save lyrics to"), song_file)
+                err_dialog = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                                               gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE, err_message)
+                err_dialog.run()
+                err_dialog.destroy()
         dialog.destroy()
 
     def mpd_shuffle(self, _action):
@@ -2941,6 +2969,8 @@ class Base(object):
                 self.on_tags_edit(None)
         elif linktype == 'search':
             self.on_lyrics_search(None)
+        elif linktype == 'savelyrics':
+            self.on_lyrics_save_to_id3tags(None)
         elif linktype == 'editlyrics':
             browser_not_loaded = not misc.browser_load(self.lyricwiki.lyricwiki_editlink(self.songinfo), self.config.url_browser, self.window)
         if browser_not_loaded:

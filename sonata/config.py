@@ -57,6 +57,7 @@ class Config:
         self.show_statusbar = False
         self.show_trayicon = True
         self.show_lyrics = True
+        self.save_lyrics_to_id3tags = False
         self.stop_on_exit = False
         self.update_on_start = False
         self.minimize_to_systray = False
@@ -180,6 +181,8 @@ class Config:
             self.show_statusbar = conf.getboolean('player', 'statusbar')
         if conf.has_option('player', 'lyrics'):
             self.show_lyrics = conf.getboolean('player', 'lyrics')
+        if conf.has_option('player', 'save_lyrics_to_id3tags'):
+            self.save_lyrics_to_id3tags = conf.getboolean('player', 'save_lyrics_to_id3tags')
         if conf.has_option('player', 'sticky'):
             self.sticky = conf.getboolean('player', 'sticky')
         if conf.has_option('player', 'ontop'):
@@ -411,6 +414,7 @@ class Config:
         conf.set('player', 'minimize', self.minimize_to_systray)
         conf.set('player', 'statusbar', self.show_statusbar)
         conf.set('player', 'lyrics', self.show_lyrics)
+        conf.set('player', 'save_lyrics_to_id3tags', self.save_lyrics_to_id3tags)
         conf.set('player', 'notification', self.show_notification)
         conf.set('player', 'popup_time', self.popup_option)
         conf.set('player', 'notif_location', self.traytips_notifications_location)

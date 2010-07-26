@@ -403,13 +403,18 @@ class Preferences():
         lyrics_location_hbox.set_sensitive(self.config.show_lyrics)
         lyrics.connect('toggled', cbs.lyrics_toggled,
             lyrics_location_hbox)
+        lyrics_save_to_id3tags = gtk.CheckButton(_("Save lyrics to id3tags"))
+        lyrics_save_to_id3tags.set_active(self.config.save_lyrics_to_id3tags)
+        lyrics_save_to_id3tags.set_tooltip_text(_("If enabled, Sonata will save fetched lyrics to id3tags of the mp3 files."))
+        lyrics_save_to_id3tags.connect('toggled', self._config_widget_active,
+            'save_lyrics_to_id3tags')
         trayicon = gtk.CheckButton(_("System _tray icon"))
         self.display_trayicon = trayicon
         trayicon.set_active(self.config.show_trayicon)
         trayicon.set_sensitive(cbs.trayicon_available)
 
         widgets = (playback, progress, statusbar, trayicon, lyrics,
-               lyrics_location_hbox, art, stylized_hbox, art_hbox,
+               lyrics_location_hbox, lyrics_save_to_id3tags, art, stylized_hbox, art_hbox,
                art_location_hbox)
         table = gtk.Table(len(widgets), 1, False)
         for i, widget in enumerate(widgets):
