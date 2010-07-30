@@ -635,13 +635,14 @@ class Base(object):
         fscalbl, fscalbl2 = self.artwork.get_fullscreenalbumlabels()
         fscahbox.pack_start(self.fullscreenalbumimage, True, False, 0)
         fscavbox.pack_start(ui.label(), True, False, 0)
-        fscavbox.pack_start(fscahbox, False, False, 0)
+        fscavbox.pack_start(fscahbox, False, False, 12)
         fscavbox.pack_start(fscalbl, False, False, 5)
         fscavbox.pack_start(fscalbl2, False, False, 5)
         fscavbox.pack_start(ui.label(), True, False, 0)
         if not self.config.show_covers:
             ui.hide(self.fullscreenalbumimage)
         self.fullscreencoverart.add(fscavbox)
+        self.gscreensaver_was_enabled = None
 
         # Connect to signals
         self.window.add_events(gtk.gdk.BUTTON_PRESS_MASK)
@@ -1828,6 +1829,7 @@ class Base(object):
             self.scrobbler.save_cache()
         if self.conn and self.config.stop_on_exit:
             self.mpd_stop(None)
+        self.gscreensaver_restore()
         sys.exit()
 
     def on_window_configure(self, window, _event):
@@ -2423,10 +2425,23 @@ class Base(object):
     def fullscreen_cover_art(self, _widget):
         if self.fullscreencoverart.get_property('visible'):
             self.fullscreencoverart.hide()
+            self.gscreensaver_restore()
         else:
             self.traytips.hide()
             self.artwork.fullscreen_cover_art_set_image(force_update=True)
             self.fullscreencoverart.show_all()
+            self.gscreensaver_disable()
+            # setting up invisible cursor
+            window = self.fullscreencoverart.window
+            pix_data = '''/* XPM */
+                static char * invisible_xpm[] = {
+                "1 1 1 1",
+                " c None",
+                " "};'''
+            color = gtk.gdk.Color()
+            pix = gtk.gdk.pixmap_create_from_data(window, pix_data, 1, 1, 1, color, color)
+            invisible_cursor = gtk.gdk.Cursor(pix, pix, color, color, 0, 0)
+            window.set_cursor(invisible_cursor)
 
     def fullscreen_cover_art_close(self, _widget, event, key_press):
         if key_press:
@@ -2435,6 +2450,19 @@ class Base(object):
             if shortcut != 'Escape':
                 return
         self.fullscreencoverart.hide()
+        self.gscreensaver_restore()
+
+    def gscreensaver_disable(self):
+        check_cmd = 'gconftool-2 --get /apps/gnome-screensaver/idle_activation_enabled | grep true 2>/dev/null >/dev/null'
+        disable_cmd = 'gconftool-2 --type bool --set /apps/gnome-screensaver/idle_activation_enabled false 2>/dev/null >/dev/null'
+        self.gscreensaver_was_enabled = (os.system(check_cmd) == 0)
+        if self.gscreensaver_was_enabled:
+            os.system(disable_cmd)
+
+    def gscreensaver_restore(self):
+        enable_cmd = 'gconftool-2 --type bool --set /apps/gnome-screensaver/idle_activation_enabled true 2>/dev/null >/dev/null'
+        if self.gscreensaver_was_enabled:
+            os.system(enable_cmd)
 
     def header_save_column_widths(self):
         if not self.config.withdrawn and self.config.expanded:
