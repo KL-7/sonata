@@ -44,7 +44,7 @@ class LyricWiki(object):
                 lyricpage = urllib.urlopen(addr).read()
                 content = re.split("<textarea[^>]*>", lyricpage)[1].split("</textarea>")[0]
                 content = content.strip()
-            lyrics = content.split("&lt;lyrics&gt;")[1].split("&lt;/lyrics&gt;")[0]
+            lyrics = content.split("&lt;lyrics&gt;")[1].split("&lt;/lyrics&gt;")[0].strip()
             if lyrics.strip() != "&lt;!-- PUT LYRICS HERE (and delete this entire line) --&gt;":
                 lyrics = misc.unescape_html(lyrics)
                 lyrics = misc.wiki_to_html(lyrics)

@@ -46,6 +46,7 @@ def unescape_html(s):
 
 # XXX Should we depend on a library to do this or get html from the services?
 def wiki_to_html(s):
+    s = re.sub(r"'''''(.*?)'''''", r"<b><i>\1</i></b>", s)
     s = re.sub(r"'''(.*?)'''", r"<b>\1</b>", s)
     s = re.sub(r"''(.*?)''",   r"<i>\1</i>", s)
     return s
