@@ -397,7 +397,7 @@ class Info(object):
                 self.lyricsText.set_markup(error)
             elif lyrics:
                 try:
-                    self.lyricsText.set_markup(misc.escape_html(lyrics))
+                    self.lyricsText.set_markup(lyrics.replace('&', '&amp;'))
                 except: ### XXX why would this happen?
                     self.lyricsText.set_text(lyrics)
             else:
