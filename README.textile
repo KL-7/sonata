@@ -1,0 +1,1 @@
+As the original developers have suspended work on this "elegant music client for MDP" (the latest commit in the official repository is dated 29 Oct 2009), I decided to make some improvements and bugfixes on my own. And here they are.
