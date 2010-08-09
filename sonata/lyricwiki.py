@@ -25,7 +25,9 @@ class LyricWiki(object):
         lyricThread.start()
 
     def lyricwiki_format(self, text):
-        return urllib.quote(str(unicode(text).title()))
+        # capitalize words (a word may contain anything but ().-[] characters and any kind of spaces)
+        text = re.sub(r"[^-\.\(\)\[\]\s]+", lambda m: m.group().capitalize(), text)
+        return urllib.quote(str(unicode(text)))
 
     def lyricwiki_editlink(self, songinfo):
         artist, title = [self.lyricwiki_format(mpdh.get(songinfo, key))
