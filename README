@@ -1,0 +1,25 @@
+There are simple sonata panel icons for ubuntu-mono-dark icon theme.
+
+HOW TO USE
+
+To use these icons you're to copy all the PNG files from umd-panel-icons
+into appropriate folder.
+
+SVG file contains four layers: one for a note (sonata logo) and one for
+each of three panel states - play, pause, disconnected. It's not to be
+copied anywhere, but you can edit this vector file for any further
+customizations to get icons of any color and size.
+
+WHERE TO COPY
+
+If you install sonata from source the simplest way to use these icons
+is to copy them into sonata/pixmaps directory before starting the
+installation process.
+
+If you want to use these icons with already installed sonata you have
+to copy them into /usr/share/pixmaps directory.
+
+If you installed sonata from source without specifying --prefix option
+it's most likely installed into /usr/local directory instead of default
+/usr. In this case you have to copy the icons to /usr/local/share/pixmaps
+directory.
