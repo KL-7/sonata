@@ -3220,6 +3220,7 @@ class Base(object):
             self.statusicon.set_visible(self.config.show_trayicon)
             self.statusicon.connect('popup_menu', self.systemtray_menu)
             self.statusicon.connect('activate', self.systemtray_activate)
+            self.statusicon.connect('scroll-event', self.systemtray_scroll)
         elif HAVE_EGG:
             self.trayimage = ui.image()
             self.trayeventbox = ui.eventbox(add=self.trayimage)
