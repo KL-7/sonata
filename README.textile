@@ -1,1 +1,15 @@
-As the original developers have suspended work on this "elegant music client for MDP" (the latest commit in the official repository is dated 29 Oct 2009), I decided to make some improvements and bugfixes on my own. And here they are.
+As the original developers have suspended work on this "elegant music client for MPD"
+(the latest commit in the official repository is dated 29 Oct 2009), I decided to make some
+improvements and bugfixes on my own. And here they are...
+
+**IMPLEMENTED FEATURES**:
+* saving fetched lyrics into mp3's id3tags
+* temporary disabling gnome-screensaver in fullscreen mode
+* some improvements for multi-CD albums
+
+**TODO**:
+* add 'Love' button for last.fm
+* playlist of local tracks that are loved/toprated on last.fm (may be as separate plugin)
+* automatic feeding playlist with similar tracks from mpd library
+
+__For more information see official README file.__
