@@ -358,7 +358,6 @@ class Artwork(object):
                 "%s.jpg" % streamname.replace("/", ""))
 
     def artwork_check_for_local(self, artist, album, path):
-        self.artwork_set_default_icon(artist, album, path)
         self.misc_img_in_dir = None
         self.single_img_in_dir = None
         location_type, filename = self.artwork_get_local_image()
@@ -371,6 +370,7 @@ class Artwork(object):
             gobject.idle_add(self.artwork_set_image, filename, artist, album, path)
             return True
 
+        self.artwork_set_default_icon(artist, album, path)
         return False
 
     def artwork_get_local_image(self, songpath=None, artist=None, album=None):

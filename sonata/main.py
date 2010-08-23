@@ -832,7 +832,8 @@ class Base(object):
         return None
 
     def playing_song_change(self):
-        self.artwork.artwork_update()
+        if self.prevsonginfo != self.songinfo:
+            self.artwork.artwork_update()
         for _plugin, cb in pluginsystem.get('playing_song_observers'):
             cb(self.get_playing_song())
 
