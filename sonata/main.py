@@ -326,6 +326,10 @@ class Base(object):
                 <menuitem action="prevmenu"/>
                 <menuitem action="nextmenu"/>
                 <separator name="FM2"/>
+                <menuitem action="randommenu"/>
+                <menuitem action="fullscreencoverart_menu"/>
+                <menuitem action="preferencemenu"/>
+                <separator name="FM3"/>
                 <menuitem action="quitmenu"/>
               </popup>
               <popup name="mainmenu">
