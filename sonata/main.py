@@ -1767,7 +1767,12 @@ class Base(object):
                     self.traytips.hide()
             elif self.traytips.get_property('visible'):
                 try:
-                    self.traytips._real_display(self.trayeventbox)
+                    if HAVE_STATUS_ICON and self.statusicon.is_embedded() and self.statusicon.get_visible():
+                        self.traytips._real_display(self.statusicon)
+                    elif HAVE_EGG and self.trayicon.get_property('visible'):
+                        self.traytips._real_display(self.trayeventbox)
+                    else:
+                        self.traytips._real_display(None)
                 except:
                     pass
 
