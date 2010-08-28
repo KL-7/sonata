@@ -326,6 +326,10 @@ class Base(object):
                 <menuitem action="prevmenu"/>
                 <menuitem action="nextmenu"/>
                 <separator name="FM2"/>
+                <menuitem action="randommenu"/>
+                <menuitem action="fullscreencoverart_menu"/>
+                <menuitem action="preferencemenu"/>
+                <separator name="FM3"/>
                 <menuitem action="quitmenu"/>
               </popup>
               <popup name="mainmenu">
@@ -1768,7 +1772,12 @@ class Base(object):
                     self.traytips.hide()
             elif self.traytips.get_property('visible'):
                 try:
-                    self.traytips._real_display(self.trayeventbox)
+                    if HAVE_STATUS_ICON and self.statusicon.is_embedded() and self.statusicon.get_visible():
+                        self.traytips._real_display(self.statusicon)
+                    elif HAVE_EGG and self.trayicon.get_property('visible'):
+                        self.traytips._real_display(self.trayeventbox)
+                    else:
+                        self.traytips._real_display(None)
                 except:
                     pass
 
@@ -2580,6 +2589,13 @@ class Base(object):
             self.traytips._remove_timer()
 
     def withdraw_app_undo(self):
+        # get desktop size
+        ws_width, ws_height = gtk.gdk.get_default_root_window().get_size()
+        # convert window coordinates to current workspace so sonata
+        # will always appear on the current workspace with the same
+        # position as it was before (may be on the other workspace)
+        self.config.x %= ws_width
+        self.config.y %= ws_height
         self.window.move(self.config.x, self.config.y)
         if not self.config.expanded:
             self.notebook.set_no_show_all(True)
@@ -3221,6 +3237,7 @@ class Base(object):
             self.statusicon.set_visible(self.config.show_trayicon)
             self.statusicon.connect('popup_menu', self.systemtray_menu)
             self.statusicon.connect('activate', self.systemtray_activate)
+            self.statusicon.connect('scroll-event', self.systemtray_scroll)
         elif HAVE_EGG:
             self.trayimage = ui.image()
             self.trayeventbox = ui.eventbox(add=self.trayimage)
