@@ -3,6 +3,7 @@ As the original developers have suspended work on this "elegant music client for
 improvements and bugfixes on my own. And here they are...
 
 **IMPLEMENTED FEATURES**:
+* create panel icons for Ubuntu Mono Dark icon theme
 * saving fetched lyrics into mp3's id3tags
 * temporary disabling gnome-screensaver in fullscreen mode
 * some improvements for multi-CD albums
