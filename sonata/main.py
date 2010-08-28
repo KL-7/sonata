@@ -102,6 +102,8 @@ class Base(object):
 
         self.client = mpd.MPDClient()
         self.conn = False
+        # Anything != than self.conn, to actually refresh the UI at startup.
+        self.prevconn = not self.conn
 
         # Constants
         self.TAB_CURRENT = _("Current")
@@ -135,7 +137,6 @@ class Base(object):
         # Initialize vars for GUI
         self.current_tab = self.TAB_CURRENT
 
-        self.prevconn = []
         self.prevstatus = None
         self.prevsonginfo = None
 
@@ -1016,7 +1017,6 @@ class Base(object):
                     return
         except:
             pass
-        self.prevconn = self.client
         self.prevstatus = self.status
         self.prevsonginfo = self.songinfo
         self.conn = False
@@ -1028,6 +1028,13 @@ class Base(object):
         self.update_status()
         self.info_update(False)
 
+        # XXX: this is subject to race condition, since self.conn can be changed
+        # in another thread:
+        # 1. self.conn == self.prevconn (stable state)
+        # 2. This if is tested and self.handle_change_conn is not called
+        # 3. The connection thread updates self.conn
+        # 4. self.prevconn = self.conn and we never get into the connected state
+        # (or maybe throught another way, but well).
         if self.conn != self.prevconn:
             self.handle_change_conn()
         if self.status != self.prevstatus:
