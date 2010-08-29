@@ -7,7 +7,7 @@ from version import version
 
 # the mpd commands need a connection to server and exit without gui
 mpd_cmds = ["play", "pause", "stop", "next", "prev", "pp", "info",
-            "status", "repeat", "random"]
+            "status", "repeat", "random", "single", "consume"]
 
 class Args(object):
     def __init__(self):
@@ -34,6 +34,8 @@ class Args(object):
         "  pp              %s" % _("toggle play/pause; plays if stopped"),
         "  repeat          %s" % _("toggle repeat mode"),
         "  random          %s" % _("toggle random mode"),
+        "  single          %s" % _("toggle single mode"),
+        "  consume         %s" % _("toggle consume mode"),
         "  info            %s" % _("display current song info"),
         "  status          %s" % _("display MPD status"),
         ))
@@ -168,6 +170,12 @@ class CliMain(object):
     def _execute_repeat(self):
         self._execute_bool('repeat')
 
+    def _execute_single(self):
+        self._execute_bool('single')
+
+    def _execute_consume(self):
+        self._execute_bool('consume')
+
     def _execute_pp(self):
         if self.status['state'] in ['play']:
             mpdh.call(self.client, 'pause', 1)
@@ -210,6 +218,8 @@ class CliMain(object):
 
         print "%s %s" % (_("Repeat:"), _("On") if self.status['repeat'] == '1' else _("Off"))
         print "%s %s" % (_("Random:"), _("On") if self.status['random'] == '1' else _("Off"))
+        print "%s %s" % (_("Single:"), _("On") if self.status['single'] == '1' else _("Off"))
+        print "%s %s" % (_("Consume:"), _("On") if self.status['consume'] == '1' else _("Off"))
         print "%s: %s/100" % (_("Volume"), self.status['volume'])
         print "%s: %s %s" % (_('Crossfade'), self.status['xfade'],
                     gettext.ngettext('second', 'seconds',
