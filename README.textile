@@ -3,14 +3,24 @@ As the original developers have suspended work on this "elegant music client for
 improvements and bugfixes on my own. And here they are...
 
 **IMPLEMENTED FEATURES**:
-* create panel icons for Ubuntu Mono Dark icon theme
-* saving fetched lyrics into mp3's id3tags
+* panel icons for Ubuntu Mono Dark icon theme (see umd-icons branch)
+* saving fetched lyrics into mp3's id3tags (**requires** python eyeD3 module)
 * temporary disabling gnome-screensaver in fullscreen mode
 * some improvements for multi-CD albums
+* support for MPD "single" and "consume" modes (**requires** latest development version
+of python-mpd, because current stable v0.2.1 doesn't support these MPD modes; you
+can get latest version from "jatreuman.indefero.net":http://jatreuman.indefero.net/p/python-mpd/ or "thejat.be":http://git.thejat.be/python-mpd.git/)
 
 **TODO**:
-* add 'Love' button for last.fm
-* playlist of local tracks that are loved/toprated on last.fm (may be as separate plugin)
+* 'Love' button for last.fm
+* 'alway start in tray' option into preferences
+* open playlists like directories in playlist tab
+* 'add all from this artist/album/genre' menu item
+* do not show notification if sonata is active/visible
+* ability to hide "XX songs, XX minutes" line in artists library view
 * automatic feeding playlist with similar tracks from mpd library
+* support for composer, conductor and may be some other tags
+* playlist of local tracks that are loved/toprated on last.fm (may be as a separate plugin)
+* reading artworks from id3tags
 
 __For more information see official README file.__
