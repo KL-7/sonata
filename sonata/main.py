@@ -155,6 +155,7 @@ class Base(object):
         self.skip_on_profiles_click = False
         self.last_repeat = None
         self.last_random = None
+        self.last_single = None
         self.last_consume = None
         self.last_title = None
         self.last_progress_frac = None
@@ -295,6 +296,7 @@ class Base(object):
             ('showmenu', None, _('S_how Sonata'), None, None, self.on_withdraw_app_toggle, not self.config.withdrawn),
             ('repeatmenu', None, _('_Repeat'), None, None, self.on_repeat_clicked, False),
             ('randommenu', None, _('Rando_m'), None, None, self.on_random_clicked, False),
+            ('singlemenu', None, _('S_ingle'), None, None, self.on_single_clicked, False),
             ('consumemenu', None, _('C_onsume'), None, None, self.on_consume_clicked, False),
             ]
 
@@ -357,6 +359,7 @@ class Base(object):
                 <separator name="FM1"/>
                 <menuitem action="repeatmenu"/>
                 <menuitem action="randommenu"/>
+                <menuitem action="singlemenu"/>
                 <menuitem action="consumemenu"/>
                 <menu action="updatemenu">
                   <menuitem action="updateselectedmenu"/>
@@ -489,6 +492,7 @@ class Base(object):
         self.randommenu = self.UIManager.get_widget('/mainmenu/randommenu')
         self.consumemenu = self.UIManager.get_widget('/mainmenu/consumemenu')
         self.repeatmenu = self.UIManager.get_widget('/mainmenu/repeatmenu')
+        self.singlemenu = self.UIManager.get_widget('/mainmenu/singlemenu')
         self.imagemenu = self.UIManager.get_widget('/imagemenu')
         self.traymenu = self.UIManager.get_widget('/traymenu')
         self.librarymenu = self.UIManager.get_widget('/librarymenu')
@@ -998,6 +1002,8 @@ class Base(object):
                         self.repeatmenu.set_active(self.status['repeat'] == '1')
                     if not self.last_random or self.last_random != self.status['random']:
                         self.randommenu.set_active(self.status['random'] == '1')
+                    if not self.last_single or self.last_single != self.status['single']:
+                        self.singlemenu.set_active(self.status['single'] == '1')
                     if not self.last_consume or self.last_consume != self.status['consume']:
                         self.consumemenu.set_active(self.status['consume'] == '1')
 
@@ -1010,6 +1016,7 @@ class Base(object):
                             self.config.xfade = 30
                     self.last_repeat = self.status['repeat']
                     self.last_random = self.status['random']
+                    self.last_single = self.status['single']
                     self.last_consume = self.status['consume']
                     return
         except:
@@ -1390,7 +1397,7 @@ class Base(object):
     def handle_change_status(self):
         # Called when one of the following items are changed:
         #  1. Current playlist (song added, removed, etc)
-        #  2. Repeat/random/consume/xfade/volume
+        #  2. Repeat/random/single/consume/xfade/volume
         #  3. Currently selected song in playlist
         #  4. Status (playing/paused/stopped)
         if self.status is None:
@@ -1805,6 +1812,7 @@ class Base(object):
                 info_file.write('Volume: ' + self.status['volume'] + '\n')
                 info_file.write('Repeat: ' + self.status['repeat'] + '\n')
                 info_file.write('Random: ' + self.status['random'] + '\n')
+                info_file.write('Single: ' + self.status['single'] + '\n')
                 info_file.write('Consume: ' + self.status['consume'] + '\n')
                 info_file.close()
             except:
@@ -2686,6 +2694,10 @@ class Base(object):
     def on_random_clicked(self, widget):
         if self.conn:
             self._toggle_clicked('random', widget)
+
+    def on_single_clicked(self, widget):
+        if self.conn:
+            self._toggle_clicked('single', widget)
 
     def on_consume_clicked(self, widget):
         if self.conn:
