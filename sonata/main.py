@@ -1467,9 +1467,9 @@ class Base(object):
                 self.UIManager.get_widget('/traymenu/playmenu').show()
                 self.UIManager.get_widget('/traymenu/pausemenu').hide()
                 if HAVE_STATUS_ICON:
-                    self.statusicon.set_from_file(self.find_path('sonata.png'))
+                    self.statusicon.set_from_file(self.find_path('sonata_stop.png'))
                 elif HAVE_EGG and self.eggtrayheight:
-                    self.eggtrayfile = self.find_path('sonata.png')
+                    self.eggtrayfile = self.find_path('sonata_stop.png')
                     self.trayimage.set_from_pixbuf(img.get_pixbuf_of_size(gtk.gdk.pixbuf_new_from_file(self.eggtrayfile), self.eggtrayheight)[0])
             elif self.status['state'] == 'pause':
                 self.ppbutton.set_image(ui.image(stock=gtk.STOCK_MEDIA_PLAY, stocksize=gtk.ICON_SIZE_BUTTON))
@@ -3271,7 +3271,7 @@ class Base(object):
         # Make system tray 'icon' to sit in the system tray
         if HAVE_STATUS_ICON:
             self.statusicon = gtk.StatusIcon()
-            self.statusicon.set_from_file(self.find_path('sonata.png'))
+            self.statusicon.set_from_file(self.find_path('sonata_stop.png'))
             self.statusicon.set_visible(self.config.show_trayicon)
             self.statusicon.connect('popup_menu', self.systemtray_menu)
             self.statusicon.connect('activate', self.systemtray_activate)
@@ -3288,7 +3288,7 @@ class Base(object):
                 self.trayicon.add(self.trayeventbox)
                 if self.config.show_trayicon:
                     self.trayicon.show_all()
-                    self.eggtrayfile = self.find_path('sonata.png')
+                    self.eggtrayfile = self.find_path('sonata_stop.png')
                     self.trayimage.set_from_pixbuf(img.get_pixbuf_of_size(gtk.gdk.pixbuf_new_from_file(self.eggtrayfile), self.eggtrayheight)[0])
                 else:
                     self.trayicon.hide_all()
